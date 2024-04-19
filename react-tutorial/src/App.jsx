@@ -23,40 +23,34 @@ function App() {
     },
   ]);
 
-  function inputHandler(e) {
-    setInputValue(e.target.value);
-  }
+  console.count("Render");
 
-  function SubmitHandler(e) {
+  function HandleSubmit(e) {
     e.preventDefault();
-    setModel([
-      ...model,
-      {
-        id: Math.max(...model.map((e) => e.id)) + 1,
-        content: inputValue,
-      },
-    ]);
+    const newId = Math.max(...model.map((e) => e.id)) + 1;
+    setModel([...model, { id: newId, content: inputValue }]);
+    setInputValue("");
   }
 
-  function handlerDelete(id) {
-    let deleteIndex = model.findIndex((e) => e.id === id);
-    let copyModel = [...model];
-    copyModel.splice(deleteIndex, 1);
-    setModel(copyModel);
+  function handleDelete(id) {
+    setModel(model.filter((e) => e.id !== id));
   }
 
   function handleUpdate(id) {
-    let newContent = prompt("Enter new content");
-    let updateIndex = model.findIndex((e) => e.id === id);
-    let copyModel = [...model];
-    copyModel[updateIndex].content = newContent;
-    setModel(copyModel);
+    const index = model.findIndex((item) => item.id === id);
+    const newModel = [...model];
+    newModel[index].content = prompt("Enter new content", model[index].content);
+    setModel(newModel);
   }
 
   return (
     <>
-      <form onSubmit={SubmitHandler}>
-        <input type="text" value={inputValue} onInput={inputHandler} />
+      <form onSubmit={HandleSubmit}>
+        <input
+          type="text"
+          value={inputValue}
+          onInput={(e) => setInputValue(e.target.value)}
+        />
         <button>submit</button>
       </form>
       <ul>
@@ -64,7 +58,7 @@ function App() {
           <ListItem
             key={e.id}
             data={e}
-            handleDelete={handlerDelete}
+            handleDelete={handleDelete}
             handleUpdate={handleUpdate}
           />
         ))}
